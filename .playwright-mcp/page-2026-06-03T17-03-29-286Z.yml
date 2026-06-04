@@ -1,0 +1,131 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: PrecisionAutoAI
+      - heading "Price prediction with a cleaner input flow" [level=1] [ref=e6]
+      - paragraph [ref=e7]: Choose a brand first, then pick a matching model. The form uses the trained preprocessing pipeline and returns a TRY estimate. Mileage should be entered in kilometers.
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - generic [ref=e10]: Brand-aware
+          - generic [ref=e11]: Filtered model list
+        - generic [ref=e12]:
+          - generic [ref=e13]: Output
+          - generic [ref=e14]: TRY estimate
+        - generic [ref=e15]:
+          - generic [ref=e16]: Deploy
+          - generic [ref=e17]: Flask + Docker
+    - complementary [ref=e18]:
+      - heading "How the form behaves" [level=2] [ref=e19]
+      - paragraph [ref=e20]:
+        - text: The model list updates automatically when the brand changes. Unsupported values safely fall back to
+        - strong [ref=e21]: Other
+        - text: .
+      - generic [ref=e22]:
+        - generic [ref=e23]: Brand first
+        - generic [ref=e24]: Model filtered
+        - generic [ref=e25]: One-click prediction
+  - generic [ref=e26]:
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - heading "Vehicle details" [level=2] [ref=e29]
+        - generic [ref=e30]: All fields are required
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - generic [ref=e34]: Brand
+            - combobox "Brand" [ref=e35]:
+              - option "Audi" [selected]
+              - option "BMW"
+              - option "Ford"
+              - option "Hyundai"
+              - option "Mercedes"
+              - option "Opel"
+              - option "Skoda"
+              - option "Toyota"
+              - option "Volkswagen"
+          - generic [ref=e36]:
+            - generic [ref=e37]: Model
+            - combobox "Model" [ref=e38]:
+              - option "A1" [selected]
+              - option "A2"
+              - option "A3"
+              - option "A4"
+              - option "A5"
+              - option "A6"
+              - option "A7"
+              - option "A8"
+              - option "Q2"
+              - option "Q3"
+              - option "Q5"
+              - option "Q7"
+              - option "Q8"
+              - option "R8"
+              - option "RS3"
+              - option "RS4"
+              - option "RS5"
+              - option "RS6"
+              - option "RS7"
+              - option "S3"
+              - option "S4"
+              - option "S5"
+              - option "S8"
+              - option "SQ5"
+              - option "SQ7"
+              - option "TT"
+              - option "Other"
+            - generic [ref=e39]: The list changes based on the selected brand.
+          - generic [ref=e40]:
+            - generic [ref=e41]: Year
+            - spinbutton "Year" [ref=e42]: "2020"
+          - generic [ref=e43]:
+            - generic [ref=e44]: Mileage (km)
+            - spinbutton "Mileage (km)" [ref=e45]: "50000"
+          - generic [ref=e46]:
+            - generic [ref=e47]: Transmission
+            - combobox "Transmission" [ref=e48]:
+              - option "Automatic" [selected]
+              - option "Manual"
+              - option "Other"
+              - option "Semi-Auto"
+          - generic [ref=e49]:
+            - generic [ref=e50]: Fuel Type
+            - combobox "Fuel Type" [ref=e51]:
+              - option "Diesel"
+              - option "Electric"
+              - option "Hybrid"
+              - option "Other"
+              - option "Petrol" [selected]
+          - generic [ref=e52]:
+            - generic [ref=e53]: Engine Size (L)
+            - spinbutton "Engine Size (L)" [ref=e54]: "1.6"
+        - generic [ref=e55]:
+          - button "Predict Price" [ref=e56] [cursor=pointer]
+          - generic [ref=e57]: Estimate is generated from the stored model artifact.
+      - generic [ref=e58]: Brand-specific filtering is handled in the UI and validated again on the backend.
+    - complementary [ref=e59]:
+      - generic [ref=e60]:
+        - generic [ref=e61]: Estimated price
+        - generic [ref=e62]: "--"
+        - generic [ref=e63]: Fill the form and press Predict Price to see the estimate.
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - generic [ref=e66]: Brand
+          - generic [ref=e67]: Audi
+        - generic [ref=e68]:
+          - generic [ref=e69]: Model
+          - generic [ref=e70]: Other
+        - generic [ref=e71]:
+          - generic [ref=e72]: Year
+          - generic [ref=e73]: "2020"
+        - generic [ref=e74]:
+          - generic [ref=e75]: Mileage
+          - generic [ref=e76]: 50000 km
+        - generic [ref=e77]:
+          - generic [ref=e78]: Transmission
+          - generic [ref=e79]: Automatic
+        - generic [ref=e80]:
+          - generic [ref=e81]: Fuel Type
+          - generic [ref=e82]: Petrol
+        - generic [ref=e83]:
+          - generic [ref=e84]: Engine Size
+          - generic [ref=e85]: 1.6 L

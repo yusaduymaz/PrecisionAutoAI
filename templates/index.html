@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrecisionAutoAI | Price Predictor</title>
+    <style>
+        :root {
+            --bg: #07111f;
+            --panel: rgba(8, 15, 28, 0.78);
+            --panel-strong: rgba(11, 20, 36, 0.94);
+            --panel-border: rgba(148, 163, 184, 0.16);
+            --text: #e5eef8;
+            --muted: #8ea0b6;
+            --accent: #5eead4;
+            --accent-2: #60a5fa;
+            --danger: #fb7185;
+            --field: rgba(18, 27, 46, 0.94);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 10% 15%, rgba(94, 234, 212, 0.20), transparent 22%),
+                radial-gradient(circle at 90% 20%, rgba(96, 165, 250, 0.18), transparent 22%),
+                radial-gradient(circle at 80% 88%, rgba(251, 191, 36, 0.10), transparent 20%),
+                linear-gradient(145deg, #020817 0%, #07111f 45%, #091221 100%);
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+        }
+
+        .wrap {
+            width: min(1180px, calc(100% - 28px));
+            margin: 0 auto;
+            padding: 34px 0 46px;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 18px;
+            align-items: stretch;
+            margin-bottom: 22px;
+        }
+
+        .hero-main,
+        .hero-side,
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 24px;
+            box-shadow: 0 20px 70px rgba(2, 6, 23, 0.42);
+            backdrop-filter: blur(16px);
+        }
+
+        .hero-main {
+            padding: 24px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero-main::after {
+            content: "";
+            position: absolute;
+            inset: auto -40px -70px auto;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(94, 234, 212, 0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid rgba(94, 234, 212, 0.22);
+            border-radius: 999px;
+            color: var(--accent);
+            background: rgba(8, 15, 28, 0.5);
+            letter-spacing: 0.08em;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 14px 0 10px;
+            font-size: clamp(2.2rem, 5vw, 4.2rem);
+            line-height: 0.98;
+            letter-spacing: -0.05em;
+            max-width: 12ch;
+        }
+
+        .subtitle {
+            margin: 0;
+            max-width: 760px;
+            color: var(--muted);
+            font-size: 1rem;
+            line-height: 1.75;
+        }
+
+        .hero-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .mini-card {
+            padding: 14px 16px;
+            border-radius: 18px;
+            background: rgba(10, 18, 33, 0.72);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+        }
+
+        .mini-label {
+            color: var(--muted);
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .mini-value {
+            font-size: 1.12rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .hero-side {
+            padding: 18px;
+            display: grid;
+            gap: 12px;
+            align-content: start;
+        }
+
+        .side-title {
+            margin: 0;
+            font-size: 1.02rem;
+            letter-spacing: -0.02em;
+        }
+
+        .side-note {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .pill {
+            padding: 9px 12px;
+            border-radius: 999px;
+            background: rgba(10, 18, 33, 0.76);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            color: #d9e7f7;
+            font-size: 0.88rem;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1.25fr 0.75fr;
+            gap: 18px;
+        }
+
+        .form-card,
+        .result-card {
+            padding: 22px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+        }
+
+        .section-heading span {
+            color: var(--muted);
+            font-size: 0.88rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field.full { grid-column: 1 / -1; }
+
+        label {
+            font-size: 0.9rem;
+            color: #c6d3e3;
+        }
+
+        input,
+        select {
+            width: 100%;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            background: var(--field);
+            color: var(--text);
+            border-radius: 16px;
+            padding: 14px 14px;
+            font-size: 0.97rem;
+            outline: none;
+            transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: rgba(94, 234, 212, 0.7);
+            box-shadow: 0 0 0 4px rgba(94, 234, 212, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .hint {
+            color: var(--muted);
+            font-size: 0.84rem;
+            line-height: 1.5;
+        }
+
+        .actions {
+            margin-top: 18px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        button {
+            border: 0;
+            border-radius: 16px;
+            padding: 14px 18px;
+            font-weight: 800;
+            font-size: 0.98rem;
+            color: #03111e;
+            background: linear-gradient(135deg, #5eead4, #60a5fa 55%, #fbbf24 120%);
+            cursor: pointer;
+            box-shadow: 0 12px 30px rgba(96, 165, 250, 0.18);
+        }
+
+        .note {
+            color: var(--muted);
+            font-size: 0.88rem;
+        }
+
+        .result-card {
+            display: grid;
+            gap: 14px;
+            align-content: start;
+            position: sticky;
+            top: 18px;
+        }
+
+        .metric {
+            padding: 18px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(10, 18, 33, 0.88), rgba(10, 18, 33, 0.7));
+            border: 1px solid rgba(148, 163, 184, 0.14);
+        }
+
+        .metric-label {
+            color: var(--muted);
+            font-size: 0.84rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .metric-value {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 900;
+            letter-spacing: -0.05em;
+        }
+
+        .metric-subtext {
+            margin-top: 10px;
+            color: #cfe6ff;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .error {
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: rgba(251, 113, 133, 0.12);
+            border: 1px solid rgba(251, 113, 133, 0.3);
+            color: #fecdd3;
+        }
+
+        .summary {
+            display: grid;
+            gap: 10px;
+            color: #d9e7f7;
+            font-size: 0.94rem;
+            line-height: 1.6;
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(10, 18, 33, 0.62);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .summary-row span:last-child {
+            color: #ffffff;
+            text-align: right;
+        }
+
+        .notice {
+            margin-top: 14px;
+            padding: 12px 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: rgba(10, 18, 33, 0.6);
+            color: var(--muted);
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 960px) {
+            .hero,
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .result-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .wrap {
+                width: min(100% - 18px, 1180px);
+                padding-top: 16px;
+            }
+
+            .hero-main,
+            .hero-side,
+            .form-card,
+            .result-card {
+                padding: 18px;
+            }
+
+            .hero-metrics,
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .hero-main,
+            .hero-side,
+            .form-card,
+            .result-card {
+                animation: floatIn 520ms ease both;
+            }
+
+            .hero-side { animation-delay: 80ms; }
+            .form-card { animation-delay: 120ms; }
+            .result-card { animation-delay: 160ms; }
+
+            @keyframes floatIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(16px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="wrap">
+        <section class="hero">
+            <div class="hero-main card">
+                <span class="eyebrow">PrecisionAutoAI</span>
+                <h1>Price prediction with a cleaner input flow</h1>
+                <p class="subtitle">
+                    Choose a brand first, then pick a matching model. The form uses the trained preprocessing pipeline and returns a TRY estimate.
+                    Mileage should be entered in kilometers.
+                </p>
+
+                <div class="hero-metrics">
+                    <div class="mini-card">
+                        <div class="mini-label">Brand-aware</div>
+                        <div class="mini-value">Filtered model list</div>
+                    </div>
+                    <div class="mini-card">
+                        <div class="mini-label">Output</div>
+                        <div class="mini-value">TRY estimate</div>
+                    </div>
+                    <div class="mini-card">
+                        <div class="mini-label">Deploy</div>
+                        <div class="mini-value">Flask + Docker</div>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="hero-side card">
+                <h2 class="side-title">How the form behaves</h2>
+                <p class="side-note">The model list updates automatically when the brand changes. Unsupported values safely fall back to <strong>Other</strong>.</p>
+                <div class="pill-row">
+                    <span class="pill">Brand first</span>
+                    <span class="pill">Model filtered</span>
+                    <span class="pill">One-click prediction</span>
+                </div>
+            </aside>
+        </section>
+
+        <section class="layout">
+            <div class="card form-card">
+                <div class="section-heading">
+                    <h2>Vehicle details</h2>
+                    <span>All fields are required</span>
+                </div>
+
+                <form method="POST">
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="brand">Brand</label>
+                            <select id="brand" name="brand" required>
+                                {% for option in brand_options %}
+                                <option value="{{ option }}" {% if submitted.brand == option %}selected{% endif %}>{{ option }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="model">Model</label>
+                            <select id="model" name="model" required></select>
+                            <div class="hint">The list changes based on the selected brand.</div>
+                        </div>
+
+                        <div class="field">
+                            <label for="year">Year</label>
+                            <input id="year" name="year" type="number" min="2000" max="2026" step="1" value="{{ submitted.year }}" required />
+                        </div>
+
+                        <div class="field">
+                            <label for="mileage">Mileage (km)</label>
+                            <input id="mileage" name="mileage" type="number" min="0" step="1" value="{{ submitted.mileage }}" required />
+                        </div>
+
+                        <div class="field">
+                            <label for="transmission">Transmission</label>
+                            <select id="transmission" name="transmission" required>
+                                {% for option in transmission_options %}
+                                <option value="{{ option }}" {% if submitted.transmission == option %}selected{% endif %}>{{ option }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="fuelType">Fuel Type</label>
+                            <select id="fuelType" name="fuelType" required>
+                                {% for option in fuel_options %}
+                                <option value="{{ option }}" {% if submitted.fuelType == option %}selected{% endif %}>{{ option }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field full">
+                            <label for="engineSize">Engine Size (L)</label>
+                            <input id="engineSize" name="engineSize" type="number" min="0.1" step="0.1" value="{{ submitted.engineSize }}" required />
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit">Predict Price</button>
+                        <span class="note">Estimate is generated from the stored model artifact.</span>
+                    </div>
+                </form>
+
+                <div class="notice">
+                    Brand-specific filtering is handled in the UI and validated again on the backend.
+                </div>
+            </div>
+
+            <aside class="card result-card">
+                <div class="metric">
+                    <div class="metric-label">Estimated price</div>
+                    <div class="metric-value">
+                        {% if prediction is not none %}
+                            {{ "{:,.2f}".format(prediction) }} TRY
+                        {% else %}
+                            --
+                        {% endif %}
+                    </div>
+                    <div class="metric-subtext">
+                        {% if prediction is not none %}
+                            This value is based on the selected vehicle details and the trained regression model.
+                        {% else %}
+                            Fill the form and press Predict Price to see the estimate.
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if error %}
+                <div class="error">{{ error }}</div>
+                {% endif %}
+
+                <div class="summary">
+                    <div class="summary-row"><span>Brand</span><span>{{ submitted.brand }}</span></div>
+                    <div class="summary-row"><span>Model</span><span>{{ submitted.model if submitted.model else 'Other' }}</span></div>
+                    <div class="summary-row"><span>Year</span><span>{{ submitted.year }}</span></div>
+                    <div class="summary-row"><span>Mileage</span><span>{{ submitted.mileage }} km</span></div>
+                    <div class="summary-row"><span>Transmission</span><span>{{ submitted.transmission }}</span></div>
+                    <div class="summary-row"><span>Fuel Type</span><span>{{ submitted.fuelType }}</span></div>
+                    <div class="summary-row"><span>Engine Size</span><span>{{ submitted.engineSize }} L</span></div>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <script>
+        const brandModelMap = {{ brand_model_map | tojson }};
+        const selectedBrand = {{ submitted.brand | tojson }};
+        const selectedModel = {{ submitted.model | tojson }};
+
+        const brandSelect = document.getElementById('brand');
+        const modelSelect = document.getElementById('model');
+
+        function populateModels(brand, preferredModel) {
+            const models = brandModelMap[brand] || ['Other'];
+            modelSelect.innerHTML = '';
+
+            models.forEach((model) => {
+                const option = document.createElement('option');
+                option.value = model;
+                option.textContent = model.trimStart() || model;
+                modelSelect.appendChild(option);
+            });
+
+            if (preferredModel && models.includes(preferredModel)) {
+                modelSelect.value = preferredModel;
+            } else {
+                modelSelect.value = models[0];
+            }
+        }
+
+        brandSelect.addEventListener('change', (event) => {
+            populateModels(event.target.value, null);
+        });
+
+        populateModels(selectedBrand, selectedModel);
+    </script>
+</body>
+</html>
