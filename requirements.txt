@@ -6,8 +6,6 @@ pandas
 scikit-learn
 category-encoders
 xgboost
-matplotlib
-seaborn
 
 
 #.venv\Scripts\python.exe app.py ile calistir
