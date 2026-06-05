@@ -10,5 +10,4 @@ matplotlib
 seaborn
 
 
-
-.venv\Scripts\python.exe app.py ile calistir
+#.venv\Scripts\python.exe app.py ile calistir
